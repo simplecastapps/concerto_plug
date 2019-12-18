@@ -21,10 +21,10 @@ defmodule Concerto.Plug.Mixfile do
 
   defp deps do
     [
-      {:concerto, ">= 0.0.0"},
+      {:concerto, github: "simplecastapps/concerto"},
       {:plug, ">= 0.0.0"},
-      {:mazurka, ">= 1.0.0", only: [:dev, :test]},
-      {:mazurka_plug, ">= 0.0.0", only: [:dev, :test]},
+      {:mazurka, github: "simplecastapps/mazurka", only: [:dev, :test]},
+      {:mazurka_plug, github: "simplecastapps/mazurka_plug", only: [:dev, :test]},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
