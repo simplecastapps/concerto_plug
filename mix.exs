@@ -7,8 +7,8 @@ defmodule Concerto.Plug.Mixfile do
       description: "Plug integration for Concerto",
       version: "0.1.3",
       elixir: "~> 1.2",
-      build_embedded: Mix.env == :prod,
-      start_permanent: Mix.env == :prod,
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
   end
