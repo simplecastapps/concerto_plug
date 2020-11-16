@@ -7,6 +7,7 @@ defmodule Concerto.Plug do
     end
 
     defimpl Plug.Exception do
+      def actions(_), do: []
       def status(_) do
         404
       end
