@@ -17,6 +17,7 @@ defmodule Concerto.Plug do
   defmacro __using__(opts) do
     router_key = opts[:router_key] || :concerto_router
     route_key  = opts[:route_key] || :concert_route
+    param_key = opts[:param_key] || :concerto_params
     plug_init = Keyword.get(opts, :plug_init, true)
 
     quote do
@@ -37,8 +38,8 @@ defmodule Concerto.Plug do
           {module, params} ->
             conn
             |> Map.merge(%{
-              params: params,
               private: Map.merge(private, %{
+                unquote(param_key) => params,
                 unquote(route_key) => module,
                 unquote(router_key) => __MODULE__
               })
