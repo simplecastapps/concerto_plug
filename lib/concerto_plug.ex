@@ -19,6 +19,7 @@ defmodule Concerto.Plug do
     route_key  = opts[:route_key] || :concert_route
     param_key = opts[:param_key] || :concerto_params
     plug_init = Keyword.get(opts, :plug_init, true)
+    handle_not_found = opts[:handle_not_found] || false
 
     quote do
       unquote(if plug_init do
@@ -34,7 +35,7 @@ defmodule Concerto.Plug do
         |> Plug.Conn.put_private(unquote(router_key), __MODULE__)
       end
       def match(%Plug.Conn{method: method, path_info: path, private: private} = conn, _opts) do
-        case match(method, Enum.map(path, &URI.decode/1)) do
+        case match_path(method, Enum.map(path, &URI.decode/1)) do
           {module, params} ->
             conn
             |> Map.merge(%{
@@ -44,9 +45,18 @@ defmodule Concerto.Plug do
                 unquote(router_key) => __MODULE__
               })
             })
+
           nil ->
-            exception = Concerto.Plug.NotFoundError.exception(method: method, path_info: path)
-            raise Plug.Conn.WrapperError, conn: conn, kind: :error, reason: exception, stack: []
+            # exception = Concerto.Plug.NotFoundError.exception(method: method, path_info: path)
+            # raise Plug.Conn.WrapperError, conn: conn, kind: :error, reason: exception, stack: []
+            conn
+            |> Map.merge(%{
+              private: Map.merge(private, %{
+                unquote(param_key) => nil,
+                unquote(route_key) => nil,
+                unquote(router_key) => nil
+              })
+            })
         end
       end
 
@@ -54,6 +64,8 @@ defmodule Concerto.Plug do
       def dispatch(%Plug.Conn{private: %{unquote(route_key) => route}} = conn, _opts) do
         route.call(conn, [])
       end
+
+      defoverridable [match: 2, dispatch: 2]
     end
   end
 
